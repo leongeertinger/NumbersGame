@@ -4,10 +4,27 @@
     {
         static void Main(string[] args)
         {
-            
-            
-            
-            int targetNumber = getTargetNumber();
+
+            NumbersGame numbersGame = new();
+
+            int difficulty;
+            while (true)
+            {
+                Console.WriteLine("--- Välj svårighetsgrad ---");
+                Console.WriteLine("1: 0-10");
+                Console.WriteLine("2: 0-100");
+                Console.WriteLine("3: 0-1000");
+                
+                string answer = Console.ReadLine();
+                if (int.TryParse(answer, out difficulty) && 
+                    difficulty >= 1 && difficulty <= 3)
+                {
+                    break;                       
+                }
+                Console.WriteLine("Ange ett giltigt nummer mellan 1 och 3");
+            }
+
+            int targetNumber = numbersGame.getTargetNumber(difficulty);
 
             Console.Write("Jag tänker på ett tal. Gissa vilket: ");
 
@@ -16,7 +33,7 @@
                 int guess;
                 try
                 {
-                    guess = Int32.Parse(Console.ReadLine());
+                    guess = int.Parse(Console.ReadLine());
                 }
                 catch
                 {
@@ -31,25 +48,78 @@
                 }
                 else
                 {
-                    int distance = checkDistance(guess, targetNumber);
+                    int distance = numbersGame.checkDistance(guess, targetNumber);
+
+                    int burningGrade = numbersGame.getBurningGrade(distance, targetNumber);
+                    string burningGradeMessage;
+                    switch (burningGrade)
+                    {
+                        case 1:
+                            burningGradeMessage = "Väldigt nära!";
+                            break;
+                        case 2:
+                            burningGradeMessage = "Det bränns!";
+                            break;
+                        case 3:
+                            burningGradeMessage = "Det känns kallt.";
+                            break;
+                        case 4:
+                            burningGradeMessage = "Iskallt. Brr.";
+                            break;
+                        default:
+                            burningGradeMessage = "Fortsätt gissa...";
+                            break;
+
+                    }
+                    
                     string message = distance > 0 ? "För högt!" : "För lågt!";
-                    Console.WriteLine(message + " " + "Gissa igen: ");
+                    message += " " + burningGradeMessage;
+
+
+                    Console.Write("\n" + message + "\n" + "Gissning: ");
                 }
             }
 
         }
         public class NumbersGame
         {
-            public int getTargetNumber(int low = 0, int high = 10)
+            public int getTargetNumber(int difficulty)
             {
+                int low = 0;
+                int high = 1;
+                for (int i = 0; i < difficulty; i++)
+                {
+                    high *= 10;
+                }
                 Random random = new Random();
                 int targetNumber = random.Next(low, high);
                 return targetNumber;
             }
 
-            private int checkDistance(int guess, int targetNumber)
+            public int checkDistance(int guess, int targetNumber)
             {
                 return guess - targetNumber;
+            }
+
+            public int getBurningGrade(int distance, int targetNumber)
+            {
+                int positiveDistanceNumber = distance < 0 ? -distance : distance;
+
+                switch (positiveDistanceNumber)
+                {
+                    case 1:
+                        return 1;
+                        
+                    case >= 2 and <= 4:
+                        return 2;
+                        
+                    case >= 5 and <= 10:
+                        return 3;
+                        
+                    default:
+                        return 4;
+                        
+                }
             }
         }
     }
