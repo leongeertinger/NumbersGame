@@ -16,6 +16,7 @@
                 Console.WriteLine("3: 0-1000");
                 
                 string answer = Console.ReadLine();
+                //Checks that user input is correctly formatted.
                 if (int.TryParse(answer, out difficulty) && 
                     difficulty >= 1 && difficulty <= 3)
                 {
@@ -48,6 +49,7 @@
                 }
                 else
                 {
+                    //Checks distance between guess and target and gives hints.
                     int distance = numbersGame.checkDistance(guess, targetNumber);
 
                     int burningGrade = numbersGame.getBurningGrade(distance, targetNumber);
@@ -103,6 +105,7 @@
 
             public int getBurningGrade(int distance, int targetNumber)
             {
+                //Makes distance positive either way and assigns a grade based on how close it is.
                 int positiveDistanceNumber = distance < 0 ? -distance : distance;
 
                 switch (positiveDistanceNumber)
